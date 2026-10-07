@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Payment · {{ cfg.APP_NAME }}{% endblock %}
+{% set CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' %}
+{% block content %}
+<section>
+  <div class="pay-wrap">
+    <a class="back-link" href="{{ url_for('pages.assistant') }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>Back to assistant</a>
+    <div class="plan-card">
+      <div class="plan-head"><h2>Your plan</h2><span class="trial-badge" id="trial-badge"></span></div>
+      <div class="price-row"><span class="amt tnum">{{ state.price }}</span><span class="per" id="price-per"></span></div>
+      <div class="feature-list">
+        <div>{{ CHECK|safe }}Unlimited voice sessions</div>
+        <div>{{ CHECK|safe }}AI summaries and drafted replies</div>
+        <div>{{ CHECK|safe }}Priority email support</div>
+      </div>
+      <div class="trial-note" id="trial-note"></div>
+      <div class="banner" id="pay-error" role="alert" hidden><span></span></div>
+      <button class="primary-btn" id="trial-btn" style="width:100%"></button>
+      <button class="link-btn" id="cancel-btn" hidden>Cancel plan</button>
+    </div>
+  </div>
+</section>
+<script id="state" type="application/json">{{ state|tojson }}</script>
+{% endblock %}
+{% block scripts %}
+{% if state.billing.enforced %}<script src="https://checkout.razorpay.com/v1/checkout.js"></script>{% endif %}
+<script src="{{ url_for('static', filename='payment.js') }}"></script>
+{% endblock %}

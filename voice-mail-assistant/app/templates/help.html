@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% set nav_mode = 'app' if user else 'guest' %}
+{% block title %}Help · {{ cfg.APP_NAME }}{% endblock %}
+{% block content %}
+<main class="doc">
+  <h1>Help center</h1>
+  <p class="meta">Set-up guides, what you can say, and fixes for common problems.</p>
+  <nav class="toc" aria-label="Contents">
+    <a href="#quick-start">Quick start</a><a href="#app-password">Create a Gmail App Password</a><a href="#ai-key">Get an AI API key</a>
+    <a href="#commands">What you can say</a><a href="#billing">Plan and billing</a><a href="#trouble">Troubleshooting</a>
+  </nav>
+
+  <h2 id="quick-start">Quick start</h2>
+  <ol>
+    <li>Sign in with Google and accept the four permissions.</li>
+    <li>In Profile settings, add your Gmail address and an App Password, then select <strong>Test Gmail login</strong>.</li>
+    <li>Choose an AI provider, paste your API key and select <strong>Test AI connection</strong>.</li>
+    <li>On the Assistant page, press <strong>Turn on</strong> and allow the microphone.</li>
+  </ol>
+
+  <h2 id="app-password">Create a Gmail App Password</h2>
+  <ol>
+    <li>Turn on 2-Step Verification for your Google account, if it isn't on already.</li>
+    <li>Open <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">Google App Passwords</a> and sign in again if asked.</li>
+    <li>Under "App name", type {{ cfg.APP_NAME }} and select Create.</li>
+    <li>Copy the 16-character password. Google shows it only once.</li>
+    <li>Paste it into the App Password field in Profile settings and save.</li>
+  </ol>
+  <p>Work or school accounts may have App Passwords turned off by an administrator.</p>
+
+  <h2 id="ai-key">Get an AI API key</h2>
+  <div class="table-wrap"><table class="mini-table">
+    <thead><tr><th>Provider</th><th>Where to get a key</th><th>Default model</th></tr></thead>
+    <tbody>
+      <tr><td>Anthropic Claude</td><td><a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a></td><td><code>{{ providers.anthropic.model }}</code></td></tr>
+      <tr><td>Google Gemini</td><td><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com</a></td><td><code>{{ providers.gemini.model }}</code></td></tr>
+      <tr><td>OpenAI</td><td><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com</a></td><td><code>{{ providers.openai.model }}</code></td></tr>
+      <tr><td>Groq</td><td><a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com</a></td><td><code>{{ providers.groq.model }}</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>The key is optional. Without one, the assistant reads the opening of each email and sends your reply as you dictated it.</p>
+
+  <h2 id="commands">What you can say</h2>
+  <ul>
+    <li><strong>"Yes"</strong> or <strong>"no"</strong> when it offers to read your mail or send a reply.</li>
+    <li><strong>"Reply"</strong>, <strong>"mark it as read"</strong> or <strong>"skip"</strong> after each email.</li>
+    <li><strong>"Repeat"</strong> to hear an email again.</li>
+    <li><strong>"Change it"</strong> after hearing a draft, to dictate the reply again.</li>
+    <li><strong>"Check my mail"</strong> while it's watching your inbox.</li>
+    <li><strong>"Turn off"</strong> or <strong>"goodbye"</strong> at any time.</li>
+  </ul>
+
+  <h2 id="billing">Plan and billing</h2>
+  <p>Your first {{ cfg.TRIAL_DAYS }} days are free. After that the plan is {{ cfg.PLAN_PRICE_DISPLAY }} a month, charged through Razorpay. Cancel from the Payment page: a trial ends at its original date, and a paid plan runs to the end of the month already paid for.</p>
+
+  <h2 id="trouble">Troubleshooting</h2>
+  <h3>The Turn on button is greyed out</h3>
+  <p>Connect a Gmail account in Profile settings, and check on the Payment page that your trial or plan is active.</p>
+  <h3>"The microphone is blocked"</h3>
+  <p>Select the lock or microphone icon in the address bar, allow the microphone for this site and turn the assistant on again.</p>
+  <h3>"Gmail rejected the address or App Password"</h3>
+  <p>Create a new App Password and save it again. Changing your Google password revokes old App Passwords.</p>
+  <h3>It doesn't hear me</h3>
+  <p>Wait for the pill to say Listening before you speak, and check the right microphone is selected in your browser settings.</p>
+  <h3>I can't hear it</h3>
+  <p>Check the tab isn't muted and your system volume is up. Some browsers need one click on the page before they'll play sound.</p>
+  <h3>It stopped after a while</h3>
+  <p>The tab must stay open while the assistant is on. Browsers may pause tabs in the background or when the computer sleeps.</p>
+  <p>Still stuck? Email <a href="mailto:{{ cfg.SUPPORT_EMAIL }}">{{ cfg.SUPPORT_EMAIL }}</a>.</p>
+</main>
+{% endblock %}

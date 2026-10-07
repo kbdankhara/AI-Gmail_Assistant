@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% set nav_mode = 'minimal' if onboarding else 'app' %}
+{% block title %}Profile settings · {{ cfg.APP_NAME }}{% endblock %}
+{% block content %}
+<div class="modal-backdrop" id="gmail-help-backdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="gmail-help-title">
+    <div class="modal-head">
+      <h3 id="gmail-help-title">Create a Gmail App Password</h3>
+      <button class="modal-close" id="gmail-help-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <ol>
+      <li>Turn on <strong>2-Step Verification</strong> for your Google account, if it isn't on already.</li>
+      <li>Open Google's App Passwords page below and sign in again if asked.</li>
+      <li>Under "App name", type <strong>{{ cfg.APP_NAME }}</strong> and select <strong>Create</strong>.</li>
+      <li>Copy the 16-character password Google shows you. It's only shown once.</li>
+      <li>Paste it into the App Password field here and save.</li>
+    </ol>
+    <a class="modal-link" href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">
+      Open Google App Passwords
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+    </a>
+  </div>
+</div>
+
+<section>
+  <div class="profile-wrap">
+    {% if onboarding %}
+    <div class="steps"><span class="done">1 Sign in</span><span class="sep">›</span><span class="done">2 Review &amp; accept</span><span class="sep">›</span><span class="cur">3 Set up</span></div>
+    {% else %}
+    <a class="back-link" href="{{ url_for('pages.assistant') }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>Back to assistant</a>
+    {% endif %}
+    <div class="profile-head">
+      <h1>Profile settings</h1>
+      <p>Signed in as {{ user.email }}. Secrets are encrypted before they're stored.</p>
+    </div>
+
+    <div class="field-card">
+      <h2>Gmail accounts</h2>
+      <p class="desc">Connect one or more inboxes. The assistant reads and replies from each.</p>
+      <div id="gmail-accounts"></div>
+      <button class="add-account-btn" id="add-gmail-account" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Add another Gmail account
+      </button>
+    </div>
+
+    <div class="field-card">
+      <h2>AI mode</h2>
+      <p class="desc">Your own key drives summaries and drafted replies. Without one, the assistant reads the start of each email and sends your words as dictated.</p>
+      <div class="field"><label for="ai-provider">Provider</label>
+        <select id="ai-provider">
+          {% for key, p in state.providers.items() %}<option value="{{ key }}" {{ 'selected' if key == state.ai.provider }}>{{ p.label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field"><label for="ai-model">Model</label><input id="ai-model" type="text" value="{{ state.ai.model }}" autocomplete="off" spellcheck="false" /></div>
+      <div class="field"><label for="ai-key">API key <span class="saved" id="ai-saved" hidden>saved ✓</span></label><input id="ai-key" type="password" autocomplete="off" /><span class="hint"><a href="{{ url_for('pages.help_center') }}#ai-key" target="_blank" rel="noopener">Where do I get a key?</a></span></div>
+      <div class="field-row"><button class="test-btn save" id="ai-action" type="button">Save</button><span class="result-line" id="ai-result" role="status" hidden></span></div>
+    </div>
+
+    <div class="field-card">
+      <h2>Voice</h2>
+      <div class="field"><label for="voice-lang">Voice language</label>
+        <select id="voice-lang">
+          {% for code, label in voice_langs.items() %}<option value="{{ code }}" {{ 'selected' if code == state.voice_lang }}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="banner" id="profile-error" role="alert" hidden><span></span></div>
+    <button class="primary-btn" id="save-profile" style="width:100%">Save settings</button>
+
+    {% if not onboarding %}
+    <div class="field-card">
+      <h2>Privacy and data</h2>
+      <p class="desc">Your consent is on record. Emails are never stored, so your data is only the settings on this page.</p>
+      <div class="table-wrap"><table class="mini-table">
+        <thead><tr><th>Policy version</th><th>Accepted (UTC)</th></tr></thead>
+        <tbody>{% for c in consents %}<tr><td>{{ c.policy_version }}</td><td class="tnum">{{ c.accepted_at.strftime('%Y-%m-%d %H:%M') }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+      <div class="field-row"><a class="test-btn" href="/api/me/export" download style="text-decoration:none">Download my data</a></div>
+    </div>
+
+    <div class="field-card danger">
+      <h2>Delete account</h2>
+      <p class="desc">Erases your account, saved App Passwords, API keys and consent history, and cancels your plan. Your Gmail itself is untouched. This can't be undone.</p>
+      <div class="field"><label for="delete-confirm">Type DELETE to confirm</label><input id="delete-confirm" type="text" autocomplete="off" spellcheck="false" /></div>
+      <div class="field-row"><button class="danger-btn" id="delete-account" disabled>Delete my account</button><span class="result-line err" id="delete-result" hidden></span></div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+<script id="state" type="application/json">{{ state|tojson }}</script>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='profile.js') }}"></script>{% endblock %}

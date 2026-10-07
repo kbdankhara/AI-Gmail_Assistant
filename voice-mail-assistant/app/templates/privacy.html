@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% set nav_mode = 'app' if user else 'guest' %}
+{% block title %}Privacy Policy · {{ cfg.APP_NAME }}{% endblock %}
+{% block content %}
+<main class="doc">
+  <h1>Privacy Policy</h1>
+  <p class="meta">Version {{ cfg.POLICY_VERSION }}</p>
+  <p>This policy explains what {{ cfg.APP_NAME }} collects, why, and the choices you have.</p>
+
+  <h2>1. What we collect and why</h2>
+  <div class="table-wrap"><table class="mini-table">
+    <thead><tr><th>Data</th><th>Why we need it</th><th>How it is stored</th></tr></thead>
+    <tbody>
+      <tr><td>Name, email address and profile picture from Google</td><td>To create your account and sign you in</td><td>In our database</td></tr>
+      <tr><td>Gmail addresses and App Passwords you add</td><td>To read unread mail, mark it as read and send replies you approve</td><td>App Passwords are encrypted before storage</td></tr>
+      <tr><td>AI provider, model and API keys</td><td>To summarize emails and draft replies with the provider you chose</td><td>Keys are encrypted before storage</td></tr>
+      <tr><td>Consent record</td><td>To show what you agreed to and when</td><td>Policy version, time and IP address</td></tr>
+      <tr><td>Plan status</td><td>To know whether your trial or subscription is active</td><td>Status and dates only. Card details stay with Razorpay</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>2. Your emails</h2>
+  <p>Emails are never stored. When the assistant is on, our server fetches unread messages from Gmail on demand, passes them through to be read aloud, and keeps no copy.</p>
+  <p>If you have saved an AI key, the sender, subject and text of the email being read are sent to the AI provider you chose, using your own key, to produce a summary or a draft reply. That provider's terms apply to that processing.</p>
+
+  <h2>3. Your voice</h2>
+  <p>Speech recognition and speech output are done by your browser. Your browser may send audio to its own speech service (for example Google's in Chrome) to recognise it. We receive only the recognised text of what you say, and only what is needed to act on it.</p>
+
+  <h2>4. Who we share data with</h2>
+  <ul>
+    <li>Google, to sign you in and to reach Gmail with your App Password.</li>
+    <li>The AI provider you choose, as described above.</li>
+    <li>Razorpay, to take payment for your plan.</li>
+  </ul>
+  <p>We do not sell your data or use your emails for advertising.</p>
+
+  <h2>5. Your choices</h2>
+  <ul>
+    <li>Download your data from Profile settings.</li>
+    <li>Delete your account from Profile settings. This erases your account, saved secrets and consent history.</li>
+    <li>Revoke an App Password at any time from your Google account.</li>
+  </ul>
+
+  <h2>6. Security</h2>
+  <p>Secrets are encrypted at rest and all traffic uses HTTPS. No system is perfectly secure; if we learn of a breach affecting you, we will tell you.</p>
+
+  <h2>7. Changes and contact</h2>
+  <p>If this policy changes in a way that matters, we will ask for your consent again. Questions: <a href="mailto:{{ cfg.SUPPORT_EMAIL }}">{{ cfg.SUPPORT_EMAIL }}</a>.</p>
+</main>
+{% endblock %}

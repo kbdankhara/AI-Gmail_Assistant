@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Assistant · {{ cfg.APP_NAME }}{% endblock %}
+{% set CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' %}
+{% block content %}
+<main class="shell">
+  <div class="greeting"><h1>Hello, {{ user.first_name }}</h1><p>Turn the assistant on and it'll greet you, read your unread mail aloud, and send the replies you approve.</p></div>
+  <div class="setup-strip">
+    {% if state.setup.gmail %}
+    <span class="setup-chip"><span class="dot">{{ CHECK|safe }}</span>Gmail connected{% if state.gmail_accounts|length > 1 %} ({{ state.gmail_accounts|length }}){% endif %}</span>
+    {% else %}
+    <a class="setup-chip todo" href="{{ url_for('pages.profile') }}"><span class="dot"></span>Connect your Gmail</a>
+    {% endif %}
+    {% if state.setup.ai %}
+    <span class="setup-chip"><span class="dot">{{ CHECK|safe }}</span>AI: {{ state.ai.short }}</span>
+    {% else %}
+    <a class="setup-chip todo" href="{{ url_for('pages.profile') }}"><span class="dot"></span>Add an AI key for summaries</a>
+    {% endif %}
+    {% if state.billing.enforced %}
+      {% if state.billing.status == 'trialing' and state.billing.access %}
+      <a class="setup-chip" href="{{ url_for('pages.payment') }}"><span class="dot">{{ CHECK|safe }}</span>Free trial active</a>
+      {% elif not state.billing.access %}
+      <a class="setup-chip todo" href="{{ url_for('pages.payment') }}"><span class="dot"></span>{{ 'Start your free trial' if state.billing.trial_available else 'Choose a plan to continue' }}</a>
+      {% endif %}
+    {% endif %}
+  </div>
+  <div class="notice-card" id="support-notice" role="alert" hidden>Voice needs Chrome or Edge on a secure (https) page. Open this page there to use the assistant.</div>
+  <section class="card control" aria-label="Assistant control">
+    <div class="power-wrap"><div class="power-ring" id="ring"></div>
+      <button id="power" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 0-2 2v8a2 2 0 0 0 4 0V4a2 2 0 0 0-2-2z"></path><path d="M18.4 6.6a9 9 0 1 1-12.8 0"></path></svg>
+        <span id="power-label">Turn on</span>
+      </button>
+    </div>
+    <div class="pill off" id="pill" role="status" aria-live="polite"><span class="dot"></span><span id="pill-text">Assistant is off</span></div>
+    <div class="stats"><div class="stat"><b class="tnum" id="stat-unread">—</b><span>unread</span></div><div class="stat"><b class="tnum" id="stat-checked">—</b><span>last checked</span></div></div>
+  </section>
+  <section class="card" aria-label="Conversation log">
+    <div class="log-head"><h2>Conversation</h2><span class="live" id="live-indicator"><i></i><span id="live-text">idle</span></span></div>
+    <div id="log" aria-live="polite"><p class="empty" id="log-empty">Nothing yet. Turn the assistant on to start a conversation.</p></div>
+  </section>
+</main>
+<script id="state" type="application/json">{{ state|tojson }}</script>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='assistant.js') }}"></script>{% endblock %}

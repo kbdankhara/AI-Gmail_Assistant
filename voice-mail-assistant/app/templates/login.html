@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% set nav_mode = 'guest' %}
+{% block title %}Sign in · {{ cfg.APP_NAME }}{% endblock %}
+{% block content %}
+<section class="stage">
+  <div class="tabs" role="tablist" aria-label="Sign in or create an account">
+    <button id="tab-signin" role="tab" aria-selected="{{ 'true' if mode == 'signin' else 'false' }}" class="{{ 'on' if mode == 'signin' }}">Sign in</button>
+    <button id="tab-create" role="tab" aria-selected="{{ 'true' if mode == 'create' else 'false' }}" class="{{ 'on' if mode == 'create' }}">Create account</button>
+  </div>
+  <div class="auth-card">
+    <h1 id="auth-title">Welcome back</h1>
+    <p class="sub" id="auth-sub">Sign in with Google to return to your account.</p>
+    {% if error == 'config' %}
+    <div class="banner warn" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="13"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      <span>Google sign-in isn't configured yet. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET on the server.</span>
+    </div>
+    {% elif error %}
+    <div class="banner" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="13"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      <span>Google sign-in was cancelled or failed. Please try again.</span>
+    </div>
+    {% endif %}
+    <a class="google-btn" id="google-btn" href="{{ url_for('auth.google_start') }}">
+      <span class="spinner" aria-hidden="true"></span>
+      <svg class="gicon" viewBox="0 0 48 48" aria-hidden="true">
+        <path fill="#EA4335" d="M24 9.5c3.4 0 6.4 1.2 8.8 3.5l6.5-6.5C35.3 2.6 30 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.6 5.9C12 13 17.5 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.9 7.2l7.5 5.8c4.4-4 6.9-10 6.9-17.5z"/>
+        <path fill="#FBBC05" d="M10.2 19.1a14.6 14.6 0 0 0 0 9.8l-7.6 5.9a24 24 0 0 1 0-21.6l7.6 5.9z"/>
+        <path fill="#34A853" d="M24 48c6 0 11.3-2 15.1-5.4l-7.5-5.8c-2.1 1.4-4.8 2.2-7.6 2.2-6.5 0-12-4.5-13.8-10.5l-7.6 5.9C6.5 42.6 14.6 48 24 48z"/>
+      </svg>
+      <span id="google-btn-text">Continue with Google</span>
+    </a>
+    <p class="fine">By continuing you agree to the <a href="{{ url_for('pages.terms') }}">Terms</a> and <a href="{{ url_for('pages.privacy') }}">Privacy Policy</a>. Only your name, email and profile picture are used.</p>
+    <button class="switch-mode" id="switch-mode">New here? Create an account</button>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  var tabSignin = document.getElementById('tab-signin'), tabCreate = document.getElementById('tab-create');
+  var title = document.getElementById('auth-title'), sub = document.getElementById('auth-sub');
+  var btn = document.getElementById('google-btn'), btnText = document.getElementById('google-btn-text');
+  var switchMode = document.getElementById('switch-mode');
+  function setMode(mode) {
+    var create = mode === 'create';
+    tabCreate.classList.toggle('on', create); tabSignin.classList.toggle('on', !create);
+    tabCreate.setAttribute('aria-selected', String(create)); tabSignin.setAttribute('aria-selected', String(!create));
+    title.textContent = create ? 'Create your account' : 'Welcome back';
+    sub.textContent = create ? 'Sign up with Google. It takes less than a minute.' : 'Sign in with Google to return to your account.';
+    btnText.textContent = create ? 'Sign up with Google' : 'Continue with Google';
+    switchMode.textContent = create ? 'Already have an account? Sign in' : 'New here? Create an account';
+  }
+  tabSignin.addEventListener('click', function () { setMode('signin'); });
+  tabCreate.addEventListener('click', function () { setMode('create'); });
+  switchMode.addEventListener('click', function () { setMode(tabSignin.classList.contains('on') ? 'create' : 'signin'); });
+  btn.addEventListener('click', function () { btn.classList.add('loading'); btnText.textContent = 'Signing in…'; });
+  window.addEventListener('pageshow', function () { btn.classList.remove('loading'); setMode(tabCreate.classList.contains('on') ? 'create' : 'signin'); });
+  setMode({{ mode|tojson }});
+})();
+</script>
+{% endblock %}

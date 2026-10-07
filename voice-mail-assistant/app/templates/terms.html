@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% set nav_mode = 'app' if user else 'guest' %}
+{% block title %}Terms of Service · {{ cfg.APP_NAME }}{% endblock %}
+{% block content %}
+<main class="doc">
+  <h1>Terms of Service</h1>
+  <p class="meta">Version {{ cfg.POLICY_VERSION }}</p>
+  <p>By using {{ cfg.APP_NAME }} you agree to these terms.</p>
+
+  <h2>1. The service</h2>
+  <p>{{ cfg.APP_NAME }} reads your unread Gmail aloud, summarizes messages with the AI provider you choose, and sends replies you dictate and approve. It works in supported browsers while the page is open and the assistant is on.</p>
+
+  <h2>2. Your account and credentials</h2>
+  <p>You sign in with Google. You provide your own Gmail App Password and, optionally, your own AI API key. You are responsible for those credentials and for any charges your AI provider makes for their use.</p>
+
+  <h2>3. Replies are yours</h2>
+  <p>The assistant sends a reply only after reading it back and hearing you approve it. AI summaries and drafts can be wrong or incomplete. You are responsible for what is sent from your account.</p>
+
+  <h2>4. Plan and payment</h2>
+  <p>New accounts get a {{ cfg.TRIAL_DAYS }}-day free trial. After the trial the plan is {{ cfg.PLAN_PRICE_DISPLAY }} per month, charged through Razorpay until you cancel. You can cancel at any time from the Payment page; a paid month already charged is not refunded and stays usable until it ends.</p>
+
+  <h2>5. Acceptable use</h2>
+  <p>Do not use the service to send spam, to break the law, or to access mailboxes you are not authorised to use.</p>
+
+  <h2>6. Availability and liability</h2>
+  <p>The service is provided as is. It depends on Google, your AI provider and your browser, and may be interrupted. To the extent the law allows, we are not liable for indirect losses, for missed or misread emails, or for replies you approved.</p>
+
+  <h2>7. Ending your account</h2>
+  <p>You can delete your account at any time from Profile settings. We may suspend accounts that break these terms.</p>
+
+  <h2>8. Contact</h2>
+  <p>Questions: <a href="mailto:{{ cfg.SUPPORT_EMAIL }}">{{ cfg.SUPPORT_EMAIL }}</a>.</p>
+</main>
+{% endblock %}

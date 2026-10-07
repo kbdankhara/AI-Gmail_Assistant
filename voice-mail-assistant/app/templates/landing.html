@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% set nav_mode = 'guest' %}
+{% set CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' %}
+{% block content %}
+<main class="landing">
+  <section class="hero">
+    <h1>Talk to your inbox.</h1>
+    <p class="lead">{{ cfg.APP_NAME }} greets you, reads your unread Gmail aloud, summarizes each message with AI and sends the replies you dictate and approve. Hands-free, in your browser.</p>
+    <div class="hero-actions">
+      {% if user %}
+      <a class="primary-btn" href="{{ url_for('pages.assistant') }}">Open the assistant</a>
+      {% else %}
+      <a class="primary-btn" href="{{ url_for('pages.login', mode='create') }}">Get started with Google</a>
+      <a class="secondary-btn" href="#how">See how it works</a>
+      {% endif %}
+    </div>
+    <p class="fine">Works in Chrome and Edge. You bring your own AI key. We never store your emails.</p>
+  </section>
+
+  <section>
+    <h2>Your mail, without the screen</h2>
+    <div class="grid-4">
+      <div class="card feature"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg></span><h3>A real conversation</h3><p>It asks, you answer. Reply, mark as read or skip, all by voice.</p></div>
+      <div class="card feature"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"></path><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"></path></svg></span><h3>AI summaries and drafts</h3><p>Each email in a sentence or two, and replies written from what you dictate.</p></div>
+      <div class="card feature"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg></span><h3>On until you say stop</h3><p>It keeps watching your inbox and tells you when new mail arrives.</p></div>
+      <div class="card feature"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"></circle><line x1="4" y1="12" x2="20" y2="12"></line><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"></circle><line x1="4" y1="18" x2="20" y2="18"></line><circle cx="11" cy="18" r="2" fill="currentColor" stroke="none"></circle></svg></span><h3>Your choice of AI</h3><p>Use your own key for Claude, Gemini, OpenAI or Groq.</p></div>
+    </div>
+  </section>
+
+  <section id="how" style="scroll-margin-top:80px">
+    <h2>Set up in three steps</h2>
+    <div class="grid-3">
+      <div class="card feature"><span class="step-num">1</span><h3>Sign in and accept</h3><p>Continue with Google, then review the four permissions the assistant needs.</p></div>
+      <div class="card feature"><span class="step-num">2</span><h3>Connect Gmail and AI</h3><p>Add a Gmail App Password for each inbox and the API key for your AI provider.</p></div>
+      <div class="card feature"><span class="step-num">3</span><h3>Press Turn on</h3><p>Allow the microphone and start talking. Leave the tab open while it's on.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Private by design</h2>
+    <ul class="check-list">
+      <li>{{ CHECK|safe }}<span>Your emails are never stored. They're read on demand and forgotten.</span></li>
+      <li>{{ CHECK|safe }}<span>App Passwords and API keys are encrypted before they're saved.</span></li>
+      <li>{{ CHECK|safe }}<span>Nothing is sent until you've heard the reply and said yes.</span></li>
+      <li>{{ CHECK|safe }}<span>Download your data or delete your account whenever you like.</span></li>
+    </ul>
+    <a href="{{ url_for('pages.privacy') }}">Read the Privacy Policy</a>
+  </section>
+
+  <section>
+    <h2>Questions</h2>
+    <details class="faq"><summary>Does it read my mail all the time?</summary><p>No. It only checks your inbox while the assistant is on, about every 30 seconds, and stops the moment you turn it off or close the tab.</p></details>
+    <details class="faq"><summary>Why an App Password?</summary><p>An App Password lets the assistant reach Gmail without ever seeing your Google password. You can revoke it from your Google account at any time.</p></details>
+    <details class="faq"><summary>Which browsers work?</summary><p>Chrome and Edge on desktop or Android, on a secure (https) page. Voice recognition isn't available in Firefox, and Safari support is limited.</p></details>
+    <details class="faq"><summary>What does it cost?</summary><p>{{ cfg.TRIAL_DAYS }} days free, then {{ cfg.PLAN_PRICE_DISPLAY }} a month. AI usage is billed by your AI provider on your own key.</p></details>
+  </section>
+</main>
+{% endblock %}

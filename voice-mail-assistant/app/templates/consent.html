@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% set nav_mode = 'minimal' %}
+{% block title %}Review and accept · {{ cfg.APP_NAME }}{% endblock %}
+{% block content %}
+<section class="stage">
+  <div class="steps">
+    <span class="done">1 Sign in</span><span class="sep">›</span>
+    <span class="cur">2 Review &amp; accept</span><span class="sep">›</span>
+    <span>3 Set up</span>
+  </div>
+  <div class="consent-card">
+    <h1>Before you start</h1>
+    <p class="intro">We need your explicit permission for each of the following. All are required to use the service. You can withdraw at any time by deleting your account.</p>
+    <div class="consent-list" id="consent-list">
+      {% for item in items %}
+      <label class="consent-item"><input type="checkbox" value="{{ item.key }}" /><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span><span class="txt"><b>{{ item.title }}</b><span>{{ item.text }}{% if item.key == 'terms' %} <a href="{{ url_for('pages.terms') }}" target="_blank" rel="noopener">Terms</a> · <a href="{{ url_for('pages.privacy') }}" target="_blank" rel="noopener">Privacy Policy</a>{% endif %}</span></span></label>
+      {% endfor %}
+    </div>
+    <div class="banner" id="consent-error" role="alert" hidden><span></span></div>
+    <div class="consent-actions">
+      <button class="primary-btn" id="accept-btn" disabled>Accept and continue</button>
+      <button class="secondary-btn" id="decline-btn">Decline and sign out</button>
+    </div>
+    <p class="hint">Acceptance is recorded with the policy version ({{ cfg.POLICY_VERSION }}) and time.</p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('#consent-list input'));
+  var accept = document.getElementById('accept-btn'), errBox = document.getElementById('consent-error');
+  function update() {
+    boxes.forEach(function (cb) { cb.closest('.consent-item').classList.toggle('checked', cb.checked); });
+    accept.disabled = !boxes.every(function (cb) { return cb.checked; });
+  }
+  boxes.forEach(function (cb) { cb.addEventListener('change', update); });
+  update();
+  accept.addEventListener('click', function () {
+    accept.disabled = true; accept.textContent = 'Saving…'; errBox.hidden = true;
+    VMA.api('POST', '/api/consent', { items: boxes.map(function (cb) { return cb.value; }) })
+      .then(function (r) { location.href = r.next; })
+      .catch(function (e) { errBox.hidden = false; errBox.querySelector('span').textContent = e.message; accept.textContent = 'Accept and continue'; update(); });
+  });
+  document.getElementById('decline-btn').addEventListener('click', VMA.signOut);
+})();
+</script>
+{% endblock %}
